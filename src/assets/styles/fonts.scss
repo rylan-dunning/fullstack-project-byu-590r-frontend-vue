@@ -1,0 +1,20 @@
+// Fonts
+
+$main-typography: Verdana, Geneva, Tahoma, sans-serif;
+
+
+@mixin fonts-body {
+    font-weight: normal;
+    font-family: $main-typography;
+}
+
+@mixin fonts-h3 {
+    font-weight: 300;
+    font-family: $main-typography;
+}
+
+
+@mixin fonts-buttons {
+    font-weight: bold;
+    font-family: $main-typography;
+}
