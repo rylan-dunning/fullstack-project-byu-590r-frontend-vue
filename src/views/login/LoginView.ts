@@ -1,15 +1,26 @@
 export default {
     name: 'LoginView',
-    emits: ['authenticate'],
-    data: function () {
-        return {
-            isAuthenticated: false
-        }
+    data() {
+      return {
+        username: "",
+        password: "",
+        isAuthenticated: false,
+        isValid: false,
+        usernameRules: [
+          v => !!v || "Username is required"
+        ],
+        passwordRules: [
+          v => !!v || "Password is required",
+          v => (v && v.length >= 8) || "Password must be at least 8 characters"
+        ]
+      };
     },
     methods: {
-        submitLogin() {
-            this.isAuthenticated = true;
-            this.$emit('authenticate', this.isAuthenticated)
+      submitLogin() {
+        if (this.$refs.form.validate()) {
+          this.isAuthenticated = true;
+          this.$emit('authenticate', this.isAuthenticated);
         }
+      },
     }
-}
+  }
