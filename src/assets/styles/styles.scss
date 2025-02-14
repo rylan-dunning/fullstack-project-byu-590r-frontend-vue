@@ -9,3 +9,59 @@ body {
     background-color: colors.$colors-background;
     color: colors.$colors-general-text;
 }
+
+.login-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%; /* Full width */
+    margin: 0 auto; /* Centers the box */
+}
+
+.login-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 70px;
+    border: 2px solid black;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.login-form  {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-button {
+    border-radius: 10px;
+    border: 2px solid black;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.login-rows {
+    display: flex;
+    flex-direction: row;
+    padding-top: 15px;
+    gap: 40px;
+}
+
+.v-text-field {
+    width: 100%;
+    min-width: 290px;
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid #ccc; /* Line style */
+    margin: 20px 0; /* Vertical space around the line */
+  }
+  
