@@ -2,66 +2,90 @@
 @use './spacing.scss';
 @use './fonts.scss';
 
-
-
-// Global Styles Here
+// Global Styles
 body {
-    background-color: colors.$colors-background;
-    color: colors.$colors-general-text;
+  background-color: var(--v-theme-background); // Vuetify's background color
+  color: var(--v-theme-on-background); // Text color for the background
 }
 
 .login-box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100%; /* Full width */
-    margin: 0 auto; /* Centers the box */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .login-info {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 70px;
-    border: 2px solid black;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 70px;
+  border: 2px solid var(--v-theme-on-surface); // Border adapts to theme
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: var(--v-theme-surface); // Card-like background
+  color: var(--v-theme-on-surface); // Text color
 }
 
-.login-form  {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 400px;
+.login-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
 }
 
 .login-button {
-    border-radius: 10px;
-    border: 2px solid black;
-    padding-left: 40px;
-    padding-right: 40px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    background-color: white;
+  border-radius: 10px;
+  border: 2px solid var(--v-theme-on-surface);
+  padding: 10px 40px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: var(--v-theme-surface);
+  color: var(--v-theme-on-surface);
 }
 
 .login-rows {
-    display: flex;
-    flex-direction: row;
-    padding-top: 15px;
-    gap: 40px;
+  display: flex;
+  flex-direction: row;
+  padding-top: 15px;
+  gap: 40px;
 }
 
 .v-text-field {
-    width: 100%;
-    min-width: 290px;
+  width: 100%;
+  min-width: 290px;
 }
 
 .divider {
-    border: 0;
-    border-top: 1px solid #ccc; /* Line style */
-    margin: 20px 0; /* Vertical space around the line */
-  }
-  
+  border: 0;
+  border-top: 1px solid var(--v-theme-on-surface-variant); // Subtle line color
+  margin: 20px 0;
+}
+
+.forgot-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding-bottom: 20px;
+}
+
+.register-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  padding-left: 2px;
+  background: none;
+  border: none;
+  color: var(--v-theme-primary); // Use a theme color for links
+}
+
+.register-button:hover {
+  text-decoration: underline;
+}
+
+.cool-hr {
+  height: 2px;
+  background-color: var(--v-theme-on-surface-variant);
+  margin: 20px 0;
+  border: none;
+}
