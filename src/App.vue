@@ -69,7 +69,7 @@ export default {
                 return this.auth.user.avatar
             },
             profilePictureChangeLabel() {
-                return "Profile picture change22"
+                return "Profile picture change"
             }
         })
     },
@@ -147,6 +147,7 @@ export default {
             <v-spacer></v-spacer>
             <v-btn to="/home" default>Home</v-btn>
             <v-btn to="about">About</v-btn>
+            <v-btn to="/video-games">Video Games</v-btn>
             <v-btn :prepend-icon="theme === 'light'
                 ? 'mdi-weather-sunny'
                 : 'mdi-weather-night'
