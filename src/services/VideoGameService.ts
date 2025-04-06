@@ -1,50 +1,83 @@
 import API_URL from './env'
-import authHeader from './auth-header'
-import axios from 'axios';
+import axios from 'axios'
 
 export default {
-    getVideoGames() {
-        const token = localStorage.getItem('token');
-        console.log('Token:', token); // Debugging to check if token exists
-        
-        return axios.get(`${API_URL}video-games`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-      },
-  
+  getVideoGames() {
+    // Get token from the user object
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    const token = user.token
+    console.log('Token from user object:', token)
+    
+    const headers = token 
+      ? { Authorization: `Bearer ${token}` }
+      : {}
+    
+    return axios.get(`${API_URL}video-games`, { headers })
+  },
+
   createVideoGame(gameData) {
+    // Get token from the user object
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    const token = user.token
+    
+    if (!token) {
+      return Promise.reject(new Error('Authentication required'))
+    }
+    
     return axios.post(`${API_URL}video-games`, gameData, {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'multipart/form-data'
-      }
-    });
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    })
   },
-  
+
   getVideoGame(id) {
+    // Get token from the user object
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    const token = user.token
+    
+    if (!token) {
+      return Promise.reject(new Error('Authentication required'))
+    }
+    
     return axios.get(`${API_URL}video-games/${id}`, {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
+        Authorization: `Bearer ${token}`,
+      },
+    })
   },
-  
+
   updateVideoGame(id, gameData) {
-    return axios.put(`${API_URL}video-games/${id}`, gameData, {
+    // Get token from the user object
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    const token = user.token
+    
+    if (!token) {
+      return Promise.reject(new Error('Authentication required'))
+    }
+    
+    return axios.post(`${API_URL}video-games/${id}?_method=PUT`, gameData, {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'multipart/form-data'
-      }
-    });
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    })
   },
-  
+
   deleteVideoGame(id) {
+    // Get token from the user object
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    const token = user.token
+    
+    if (!token) {
+      return Promise.reject(new Error('Authentication required'))
+    }
+    
     return axios.delete(`${API_URL}video-games/${id}`, {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-  }
-};
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  },
+}
