@@ -116,7 +116,7 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="grey" text @click="createDialog = false">Cancel</v-btn>
-                    <v-btn color="primary" text @click="createVideoGame" :disabled="!validCreate">
+                    <v-btn color="primary" text @click="submitNewGame" :disabled="!validCreate">
                         Create
                     </v-btn>
                 </v-card-actions>
@@ -153,10 +153,11 @@
                         ></v-textarea>
                         
                         <v-file-input
-                            v-model="editedGame.file"
-                            label="Game Cover Image (Optional)"
+                            label="Game Cover Image"
                             accept="image/*"
-                            @change="onFileChangeEdit"
+                            :rules="[v => !!v || 'Cover image is required']"
+                            required
+                            @change="onFileChange"
                             prepend-icon="mdi-camera"
                         ></v-file-input>
                         
@@ -267,11 +268,20 @@ export default defineComponent({
             this.createDialog = true;
         },
         
-        onFileChange(file) {
-            this.newGame.file = file;
+        onFileChange(event) {
+            // Check if we have files in the event
+            if (event && event.length > 0) {
+                this.newGame.file = event[0]; // Vuetify returns an array of files
+            } else if (event && event.target && event.target.files && event.target.files.length > 0) {
+                // Fallback for regular DOM event
+                this.newGame.file = event.target.files[0];
+            } else {
+                this.newGame.file = null;
+            }
+            console.log("File selected:", this.newGame.file);
         },
         
-        async createVideoGame() {
+        async submitNewGame() {
             if (!this.$refs.createForm.validate()) return;
             
             try {
@@ -279,11 +289,17 @@ export default defineComponent({
                 formData.append('title', this.newGame.title);
                 formData.append('year', this.newGame.year);
                 formData.append('description', this.newGame.description);
-                formData.append('file', this.newGame.file);
+                
+                // Only append the file if it exists
+                if (this.newGame.file) {
+                    formData.append('file', this.newGame.file);
+                }
+                
+                // Log what we're sending
+                console.log("Submitting new game with file:", this.newGame.file);
                 
                 await this.createVideoGame(formData);
                 this.createDialog = false;
-                this.getVideoGames(); // Refresh the list
             } catch (error) {
                 console.error('Error creating video game:', error);
             }

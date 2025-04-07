@@ -24,6 +24,14 @@ export default {
       return Promise.reject(new Error('Authentication required'))
     }
     
+    // Debug the request
+    console.log('API URL:', `${API_URL}video-games`);
+    console.log('Token:', token);
+    console.log('FormData entries:');
+    for (let pair of gameData.entries()) {
+      console.log(pair[0] + ': ' + pair[1]);
+    }
+    
     return axios.post(`${API_URL}video-games`, gameData, {
       headers: {
         Authorization: `Bearer ${token}`,
