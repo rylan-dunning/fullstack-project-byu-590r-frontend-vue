@@ -30,6 +30,9 @@
                             <v-card-title class="game-title text-center">
                                 {{ game.title }}
                             </v-card-title>
+                            <v-card-subtitle v-if="game.esrb_rating" class="text-center">
+                                Rating: {{ game.esrb_rating.code }}
+                            </v-card-subtitle>
                             <v-card-actions>
                                 <!-- View Details Button -->
                                 <v-btn icon @click="showGameDetails(game)" title="View Details">
@@ -60,6 +63,9 @@
                 </v-card-title>
                 <v-card-subtitle>
                     Release Year: {{ selectedGame.year }}
+                    <div v-if="selectedGame.esrb_rating">
+                        ESRB Rating: {{ selectedGame.esrb_rating.code }} - {{ selectedGame.esrb_rating.name }}
+                    </div>
                 </v-card-subtitle>
                 <v-card-text>
                     <div class="text-body-1">{{ selectedGame.description }}</div>
@@ -95,6 +101,25 @@
                             ]"
                             required
                         ></v-text-field>
+                        
+                        <v-select
+                            v-model="newGame.esrb_rating_id"
+                            :items="esrbRatings"
+                            label="ESRB Rating"
+                            hint="Select the game's ESRB rating"
+                            persistent-hint
+                            return-object
+                            item-title="name"
+                            item-value="id"
+                        >
+                            <template v-slot:selection="{ item }">
+                                {{ item.raw ? `${item.raw.code} - ${item.raw.name}` : '' }}
+                            </template>
+                            <template v-slot:item="{ item }">
+                                {{ item.raw ? `${item.raw.code} - ${item.raw.name}` : '' }}
+                                <span v-if="item.raw && item.raw.description" class="text-caption"> ({{ item.raw.description }})</span>
+                            </template>
+                        </v-select>
                         
                         <v-textarea
                             v-model="newGame.description"
@@ -146,6 +171,25 @@
                             required
                         ></v-text-field>
                         
+                        <v-select
+                            v-model="editedGame.esrb_rating_id"
+                            :items="esrbRatings"
+                            label="ESRB Rating"
+                            hint="Select the game's ESRB rating"
+                            persistent-hint
+                            return-object
+                            item-title="name"
+                            item-value="id"
+                        >
+                            <template v-slot:selection="{ item }">
+                                {{ item.raw ? `${item.raw.code} - ${item.raw.name}` : '' }}
+                            </template>
+                            <template v-slot:item="{ item }">
+                                {{ item.raw ? `${item.raw.code} - ${item.raw.name}` : '' }}
+                                <span v-if="item.raw && item.raw.description" class="text-caption"> ({{ item.raw.description }})</span>
+                            </template>
+                        </v-select>
+                        
                         <v-textarea
                             v-model="editedGame.description"
                             label="Description"
@@ -155,9 +199,7 @@
                         <v-file-input
                             label="Game Cover Image"
                             accept="image/*"
-                            :rules="[v => !!v || 'Cover image is required']"
-                            required
-                            @change="onFileChange"
+                            @change="onFileChangeEdit"
                             prepend-icon="mdi-camera"
                         ></v-file-input>
                         
@@ -220,10 +262,12 @@ export default defineComponent({
                 title: '',
                 year: '',
                 description: '',
+                esrb_rating_id: null,
                 file: null
             },
             editedGame: null,
-            gameToDelete: null
+            gameToDelete: null,
+            esrbRatings: []
         };
     },
     computed: {
@@ -234,7 +278,9 @@ export default defineComponent({
             return this.videoGames.filter(game =>
                 game.title.toLowerCase().includes(searchTerm) ||
                 (game.description && game.description.toLowerCase().includes(searchTerm)) ||
-                (game.year && game.year.toString().includes(searchTerm))
+                (game.year && game.year.toString().includes(searchTerm)) ||
+                (game.esrb_rating && game.esrb_rating.code.toLowerCase().includes(searchTerm)) ||
+                (game.esrb_rating && game.esrb_rating.name.toLowerCase().includes(searchTerm))
             );
         }
     },
@@ -263,6 +309,7 @@ export default defineComponent({
                 title: '',
                 year: '',
                 description: '',
+                esrb_rating_id: null,
                 file: null
             };
             this.createDialog = true;
@@ -290,6 +337,11 @@ export default defineComponent({
                 formData.append('year', this.newGame.year);
                 formData.append('description', this.newGame.description);
                 
+                // Add ESRB rating ID if selected
+                if (this.newGame.esrb_rating_id) {
+                    formData.append('esrb_rating_id', this.newGame.esrb_rating_id.id);
+                }
+                
                 // Only append the file if it exists
                 if (this.newGame.file) {
                     formData.append('file', this.newGame.file);
@@ -307,11 +359,25 @@ export default defineComponent({
         
         // Edit game methods
         openEditDialog(game) {
+            console.log('Opening edit dialog for game:', game);
+            
+            // Find the corresponding ESRB rating object from our list
+            let rating = null;
+            if (game.esrb_rating_id) {
+                rating = this.esrbRatings.find(r => r.id === game.esrb_rating_id);
+                console.log('Found ESRB rating for ID:', game.esrb_rating_id, rating);
+            } else if (game.esrb_rating) {
+                // If the game has a complete esrb_rating object nested
+                rating = this.esrbRatings.find(r => r.id === game.esrb_rating.id);
+                console.log('Found ESRB rating from nested object:', rating);
+            }
+            
             this.editedGame = {
                 id: game.id,
                 title: game.title,
                 year: game.year,
                 description: game.description,
+                esrb_rating_id: rating || null,
                 file: null,
                 file_url: game.file_url
             };
@@ -330,6 +396,11 @@ export default defineComponent({
                 formData.append('title', this.editedGame.title);
                 formData.append('year', this.editedGame.year);
                 formData.append('description', this.editedGame.description);
+                
+                // Add ESRB rating ID if selected
+                if (this.editedGame.esrb_rating_id) {
+                    formData.append('esrb_rating_id', this.editedGame.esrb_rating_id.id);
+                }
                 
                 if (this.editedGame.file) {
                     formData.append('file', this.editedGame.file);
@@ -363,10 +434,29 @@ export default defineComponent({
             } catch (error) {
                 console.error('Error deleting video game:', error);
             }
+        },
+        
+        // ESRB ratings
+        async fetchEsrbRatings() {
+            try {
+                // Use axios instead of fetch for consistency with your store actions
+                const response = await this.$store.state.axios.get('/api/esrb-ratings');
+                console.log('ESRB ratings response:', response.data);
+                
+                if (response.data.success) {
+                    this.esrbRatings = response.data.data;
+                    console.log('ESRB ratings loaded:', this.esrbRatings);
+                } else {
+                    console.error('Error loading ESRB ratings:', response.data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching ESRB ratings:', error);
+            }
         }
     },
     created() {
         this.getVideoGames();
+        this.fetchEsrbRatings();
     }
 });
 </script>
