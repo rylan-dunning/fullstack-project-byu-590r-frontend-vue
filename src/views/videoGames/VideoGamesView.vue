@@ -102,24 +102,10 @@
                             required
                         ></v-text-field>
                         
-                        <v-select
-                            v-model="newGame.esrb_rating_id"
-                            :items="esrbRatings"
-                            label="ESRB Rating"
-                            hint="Select the game's ESRB rating"
-                            persistent-hint
-                            return-object
-                            item-title="name"
-                            item-value="id"
-                        >
-                            <template v-slot:selection="{ item }">
-                                {{ item.raw ? `${item.raw.code} - ${item.raw.name}` : '' }}
-                            </template>
-                            <template v-slot:item="{ item }">
-                                {{ item.raw ? `${item.raw.code} - ${item.raw.name}` : '' }}
-                                <span v-if="item.raw && item.raw.description" class="text-caption"> ({{ item.raw.description }})</span>
-                            </template>
-                        </v-select>
+                        <!-- ESRB Rating Selector integration -->
+                        <EsrbRatingSelector
+                            v-model="editedGame.esrb_rating_id"
+                        ></EsrbRatingSelector>
                         
                         <v-textarea
                             v-model="newGame.description"
@@ -160,7 +146,7 @@
                             :rules="[v => !!v || 'Title is required']"
                             required
                         ></v-text-field>
-                        
+
                         <v-text-field
                             v-model="editedGame.year"
                             label="Release Year"
@@ -170,39 +156,25 @@
                             ]"
                             required
                         ></v-text-field>
-                        
-                        <v-select
+
+                        <!-- ESRB Rating Selector integration -->
+                        <EsrbRatingSelector
                             v-model="editedGame.esrb_rating_id"
-                            :items="esrbRatings"
-                            label="ESRB Rating"
-                            hint="Select the game's ESRB rating"
-                            persistent-hint
-                            return-object
-                            item-title="name"
-                            item-value="id"
-                        >
-                            <template v-slot:selection="{ item }">
-                                {{ item.raw ? `${item.raw.code} - ${item.raw.name}` : '' }}
-                            </template>
-                            <template v-slot:item="{ item }">
-                                {{ item.raw ? `${item.raw.code} - ${item.raw.name}` : '' }}
-                                <span v-if="item.raw && item.raw.description" class="text-caption"> ({{ item.raw.description }})</span>
-                            </template>
-                        </v-select>
-                        
+                        ></EsrbRatingSelector>
+
                         <v-textarea
                             v-model="editedGame.description"
                             label="Description"
                             rows="3"
                         ></v-textarea>
-                        
+
                         <v-file-input
                             label="Game Cover Image"
                             accept="image/*"
                             @change="onFileChangeEdit"
                             prepend-icon="mdi-camera"
                         ></v-file-input>
-                        
+
                         <div v-if="editedGame.file_url" class="mt-3">
                             <p>Current Image:</p>
                             <v-img :src="editedGame.file_url" max-height="150" contain></v-img>
@@ -218,6 +190,8 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+
         
         <!-- Delete Confirmation Dialog -->
         <v-dialog v-model="deleteDialog" max-width="400">
@@ -246,8 +220,12 @@
 <script>
 import { defineComponent } from 'vue';
 import { mapState, mapActions } from 'vuex';
+import EsrbRatingSelector from '@/components/EsrbRatingSelector.vue';
 export default defineComponent({
     name: 'VideoGamesView',
+    components: {
+        EsrbRatingSelector
+    },
     data() {
         return {
             search: '',
@@ -498,3 +476,5 @@ export default defineComponent({
     text-align: center;
 }
 </style>
+
+
