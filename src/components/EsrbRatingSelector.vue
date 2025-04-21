@@ -19,6 +19,7 @@
   </template>
   
   <script>
+  import { API_URL } from '@/env'; // Import using the @ alias which points to src
   export default {
     name: 'EsrbRatingSelector',
     props: {
@@ -50,7 +51,7 @@
       async fetchRatings() {
         try {
           // Replace this with your actual API endpoint
-          const response = await fetch('http://localhost:8000/api/esrb-ratings');
+          const response = await fetch(`${API_URL}/esrb-ratings`);
           const data = await response.json();
           if (data.success) {
             this.ratings = data.data;

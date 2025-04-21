@@ -104,7 +104,7 @@
                         
                         <!-- ESRB Rating Selector integration -->
                         <EsrbRatingSelector
-                            v-model="editedGame.esrb_rating_id"
+                            v-model="newGame.esrb_rating_id"
                         ></EsrbRatingSelector>
                         
                         <v-textarea
@@ -417,8 +417,8 @@ export default defineComponent({
         // ESRB ratings
         async fetchEsrbRatings() {
             try {
-                // Use axios instead of fetch for consistency with your store actions
-                const response = await this.$store.state.axios.get('/api/esrb-ratings');
+                // The URL already includes '/api' in the baseURL, so we don't need to include it again
+                const response = await this.$store.state.axios.get('/esrb-ratings');
                 console.log('ESRB ratings response:', response.data);
                 
                 if (response.data.success) {
